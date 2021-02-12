@@ -2,6 +2,7 @@ package Scrabble;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class TileBag extends Tile{
@@ -147,6 +148,10 @@ public class TileBag extends Tile{
 	
 	Tile pop(int index){
 		return TileBag.remove(index);
+	}
+	
+	void shuffle(){
+		Collections.shuffle(TileBag);
 	}
 	
 	
