@@ -150,12 +150,6 @@ public class TileBag extends Tile{
 		return TileBag.remove(index);
 	}
 	
-	void addTile(int index){
-		Tile tile = new Tile();
-		tile.createTile(index);
-		TileBag.add(tile);
-	}
-	
 	void shuffle(){
 		Collections.shuffle(TileBag);
 	}
