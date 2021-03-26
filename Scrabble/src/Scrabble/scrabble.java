@@ -70,6 +70,8 @@ public class scrabble extends Tile {
 	public static int player1TotalScore = 0;
 	public static int player2TotalScore = 0;
 
+	public static JLabel lbl_player1_score, lbl_player2_score;
+
 	// Function to get the names of the two players
 	public static void getName(int i) {
 		if (i == 1) {
@@ -247,7 +249,8 @@ public class scrabble extends Tile {
 			player1.add(TileRackPlayer1[i]);
 			--upBound;
 		}
-
+		lbl_player1_score = new JLabel("Score : 0");
+		player1.add(lbl_player1_score);
 		// Adds beginning of the game tiles to player 2 tile rack
 		for (int i = 0; i < 7; i++) {
 			int number = rand.nextInt(upBound);
@@ -258,7 +261,8 @@ public class scrabble extends Tile {
 			player2.add(TileRackPlayer2[i]);
 			--upBound;
 		}
-
+		lbl_player2_score = new JLabel("Score : 0");
+		player2.add(lbl_player2_score);
 		settingButtons[0] = new JButton("Done With Turn");
 		settingButtons[1] = new JButton("Swap a Tile");
 		settingButtons[2] = new JButton("Swap all Tiles");
@@ -281,50 +285,135 @@ public class scrabble extends Tile {
 	public static void setGameBoardBonus() {
 		Icon tripleWord = new ImageIcon("board_score_multipliers/Triple_Word.png");
 		gameboardtile[1][1].setIcon(tripleWord);
+		gameboardtile[1][1].setText("3W");
 		gameboardtile[8][1].setIcon(tripleWord);
+		gameboardtile[8][1].setText("3W");
 		gameboardtile[15][1].setIcon(tripleWord);
+		gameboardtile[15][1].setText("3W");
 		gameboardtile[1][8].setIcon(tripleWord);
+		gameboardtile[1][8].setText("3W");
 		gameboardtile[8][15].setIcon(tripleWord);
+		gameboardtile[8][15].setText("3W");
 		gameboardtile[1][15].setIcon(tripleWord);
+		gameboardtile[1][15].setText("3W");
 		gameboardtile[15][15].setIcon(tripleWord);
+		gameboardtile[15][15].setText("3W");
 		gameboardtile[15][8].setIcon(tripleWord);
+		gameboardtile[15][8].setText("3W");
 
 		Icon doubleWord = new ImageIcon("board_score_multipliers/Double_Word.png");
 		gameboardtile[2][2].setIcon(doubleWord);
+		gameboardtile[2][2].setText("2W");
 		gameboardtile[3][3].setIcon(doubleWord);
+		gameboardtile[3][3].setText("2W");
 		gameboardtile[4][4].setIcon(doubleWord);
+		gameboardtile[4][4].setText("2W");
 		gameboardtile[5][5].setIcon(doubleWord);
+		gameboardtile[5][5].setText("2W");
 		gameboardtile[11][11].setIcon(doubleWord);
+		gameboardtile[11][11].setText("2W");
 		gameboardtile[12][12].setIcon(doubleWord);
+		gameboardtile[12][12].setText("2W");
 		gameboardtile[13][13].setIcon(doubleWord);
+		gameboardtile[13][13].setText("2W");
 		gameboardtile[14][14].setIcon(doubleWord);
+		gameboardtile[14][14].setText("2W");
 		gameboardtile[14][2].setIcon(doubleWord);
+		gameboardtile[14][2].setText("2W");
 		gameboardtile[13][3].setIcon(doubleWord);
+		gameboardtile[13][3].setText("2W");
 		gameboardtile[12][4].setIcon(doubleWord);
+		gameboardtile[12][4].setText("2W");
 		gameboardtile[11][5].setIcon(doubleWord);
+		gameboardtile[11][5].setText("2W");
 		gameboardtile[5][11].setIcon(doubleWord);
+		gameboardtile[5][11].setText("2W");
 		gameboardtile[4][12].setIcon(doubleWord);
+		gameboardtile[4][12].setText("2W");
 		gameboardtile[3][13].setIcon(doubleWord);
+		gameboardtile[3][13].setText("2W");
 		gameboardtile[2][14].setIcon(doubleWord);
+		gameboardtile[2][14].setText("2W");
 
 		Icon doubleLetter = new ImageIcon("board_score_multipliers/Double_Letter.png");
 		gameboardtile[4][1].setIcon(doubleLetter);
+		gameboardtile[4][1].setText("2L");
 		gameboardtile[12][1].setIcon(doubleLetter);
+		gameboardtile[12][1].setText("2L");
 		gameboardtile[1][4].setIcon(doubleLetter);
+		gameboardtile[1][4].setText("2L");
 		gameboardtile[1][12].setIcon(doubleLetter);
+		gameboardtile[1][12].setText("2L");
 		gameboardtile[4][15].setIcon(doubleLetter);
+		gameboardtile[4][15].setText("2L");
 		gameboardtile[12][15].setIcon(doubleLetter);
+		gameboardtile[12][15].setText("2L");
 		gameboardtile[15][4].setIcon(doubleLetter);
+		gameboardtile[15][4].setText("2L");
 		gameboardtile[15][12].setIcon(doubleLetter);
+		gameboardtile[15][12].setText("2L");
+		gameboardtile[7][3].setIcon(doubleLetter);
+		gameboardtile[7][3].setText("2L");
+		gameboardtile[8][4].setIcon(doubleLetter);
+		gameboardtile[8][4].setText("2L");
+		gameboardtile[9][3].setIcon(doubleLetter);
+		gameboardtile[9][3].setText("2L");
+		gameboardtile[7][7].setIcon(doubleLetter);
+		gameboardtile[7][7].setText("2L");
+		gameboardtile[9][9].setIcon(doubleLetter);
+		gameboardtile[9][9].setText("2L");
+		gameboardtile[7][9].setIcon(doubleLetter);
+		gameboardtile[7][9].setText("2L");
+		gameboardtile[9][7].setIcon(doubleLetter);
+		gameboardtile[9][7].setText("2L");
+		gameboardtile[3][7].setIcon(doubleLetter);
+		gameboardtile[3][7].setText("2L");
+		gameboardtile[4][8].setIcon(doubleLetter);
+		gameboardtile[4][8].setText("2L");
+		gameboardtile[3][9].setIcon(doubleLetter);
+		gameboardtile[3][9].setText("2L");
+		gameboardtile[13][7].setIcon(doubleLetter);
+		gameboardtile[13][7].setText("2L");
+		gameboardtile[12][8].setIcon(doubleLetter);
+		gameboardtile[12][8].setText("2L");
+		gameboardtile[13][9].setIcon(doubleLetter);
+		gameboardtile[13][9].setText("2L");
+		gameboardtile[7][13].setIcon(doubleLetter);
+		gameboardtile[7][13].setText("2L");
+		gameboardtile[8][12].setIcon(doubleLetter);
+		gameboardtile[8][12].setText("2L");
+		gameboardtile[9][13].setIcon(doubleLetter);
+		gameboardtile[9][13].setText("2L");
 
 		Icon center = new ImageIcon("board_score_multipliers/Center.png");
 		gameboardtile[8][8].setIcon(center);
+		gameboardtile[8][8].setText("Center");
 
-		Icon tripleLetter = new ImageIcon("board_score_multiplers/Triple_Letter");
+		Icon tripleLetter = new ImageIcon("board_score_multipliers/Triple_Letter.png");
 		gameboardtile[6][2].setIcon(tripleLetter);
+		gameboardtile[6][2].setText("3L");
 		gameboardtile[10][2].setIcon(tripleLetter);
+		gameboardtile[10][2].setText("3L");
 		gameboardtile[2][6].setIcon(tripleLetter);
+		gameboardtile[2][6].setText("3L");
+		gameboardtile[2][10].setIcon(tripleLetter);
+		gameboardtile[2][10].setText("3L");
+		gameboardtile[6][6].setIcon(tripleLetter);
+		gameboardtile[6][6].setText("3L");
+		gameboardtile[6][10].setIcon(tripleLetter);
+		gameboardtile[6][10].setText("3L");
+		gameboardtile[6][14].setIcon(tripleLetter);
+		gameboardtile[6][14].setText("3L");
 		gameboardtile[10][6].setIcon(tripleLetter);
+		gameboardtile[10][6].setText("3L");
+		gameboardtile[10][10].setIcon(tripleLetter);
+		gameboardtile[10][10].setText("3L");
+		gameboardtile[10][14].setIcon(tripleLetter);
+		gameboardtile[10][14].setText("3L");
+		gameboardtile[14][6].setIcon(tripleLetter);
+		gameboardtile[14][6].setText("3L");
+		gameboardtile[14][10].setIcon(tripleLetter);
+		gameboardtile[14][10].setText("3L");
 
 	}
 
@@ -373,9 +462,138 @@ public class scrabble extends Tile {
 		}
 	}
 
+	// Function to check the word input by the user against the dictionary
+	public static boolean checkWord(String wordCreated) {
+		for (String str : dictionary) {
+			if (str.toUpperCase().equals(wordCreated.toUpperCase())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// Reset Board
+	public static void resetBoard() {
+		for (int i = 0; i < 16; i++) {
+			for (int j = 0; j < 16; j++) {
+				gameboardtile[i][j].setEnabled(true);
+				gameboardtile[i][j].setIcon(null);
+				gameboardtile[i][j].setText("");
+			}
+		}
+		for (int i = 1; i < 16; i++) {
+			switch (i) {
+			case 1:
+				gameboardtile[0][i].setText("1");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("1");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 2:
+				gameboardtile[0][i].setText("2");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("2");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 3:
+				gameboardtile[0][i].setText("3");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("3");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 4:
+				gameboardtile[0][i].setText("4");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("4");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 5:
+				gameboardtile[0][i].setText("5");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("5");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 6:
+				gameboardtile[0][i].setText("6");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("6");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 7:
+				gameboardtile[0][i].setText("7");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("7");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 8:
+				gameboardtile[0][i].setText("8");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("8");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 9:
+				gameboardtile[0][i].setText("9");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("9");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 10:
+				gameboardtile[0][i].setText("10");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("10");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 11:
+				gameboardtile[0][i].setText("11");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("11");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 12:
+				gameboardtile[0][i].setText("12");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("12");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 13:
+				gameboardtile[0][i].setText("13");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("13");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 14:
+				gameboardtile[0][i].setText("14");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("14");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			case 15:
+				gameboardtile[0][i].setText("15");
+				gameboardtile[0][i].setEnabled(false);
+
+				gameboardtile[i][0].setText("15");
+				gameboardtile[i][0].setEnabled(false);
+				break;
+			}
+		}
+	}
+
 	// This is the function that calls the main game loop
 	public static void game() {
-		// ADD A terminating condition for the last letter
 		boolean gameOver = false;
 		boolean validFirstPlacement = false;
 		String wordPlayed = "";
@@ -388,27 +606,27 @@ public class scrabble extends Tile {
 			boolean isInRack = false;
 			Tile tempTile = new Tile();
 			boolean newTileToBePlaced = false;
-
-			// print to say whose turn it is
-			if (firstplayer == 1) {
-				System.out.printf("%s's turn!\n", player1Name);
-			} else {
-				System.out.printf("%s's turn!\n", player2Name);
-
-			}
+			boolean endOfWord = false;
 
 			// Gets the column and row of a tile to be place. Must be numbers.
-			while (!newTileToBePlaced) {
+			while (!newTileToBePlaced && endOfWord == false) {
 				System.out.println("---------------------------------------------------");
 				System.out.print("What column would you like to place the letter?: ");
 				// Verify Column is a number
 				while (true) {
 					try {
 						column = sc.nextInt();
-						break;
+						if (column < 1 || column > 15) {
+							System.out.println(
+									"You entered a value that is outside of the board bounds. Must be between (1 and 15).");
+							System.out.print("What column would you like to place the letter?: ");
+							String extraLine = sc.nextLine();
+						} else {
+							break;
+						}
 					} catch (Exception e) {
-						System.out.print(
-								"You did not eneter a number. What column would you like to place the letter?: ");
+						System.out
+								.print("You did not enter a number. What column would you like to place the letter?: ");
 						String extraLine = sc.nextLine();
 					}
 				}
@@ -417,9 +635,16 @@ public class scrabble extends Tile {
 				while (true) {
 					try {
 						row = sc.nextInt();
-						break;
+						if (row < 1 || row > 15) {
+							System.out.println(
+									"You entered a value that is outside of the board bounds. Must be between (1 and 15).");
+							System.out.print("What row would you like to place the letter?: ");
+							String extraLine = sc.nextLine();
+						} else {
+							break;
+						}
 					} catch (Exception e) {
-						System.out.print("You did not eneter a number. What row would you like to place the letter?: ");
+						System.out.print("You did not enter a number. What row would you like to place the letter?: ");
 						String extraLine = sc.nextLine();
 					}
 				}
@@ -438,11 +663,32 @@ public class scrabble extends Tile {
 				}
 
 				// Will account for a user adding letters to an existing word
-				// NEED TO ADD IMPLEMENTATION IF THE LETTER IS THE END OF THE
-				// WORD------------------
 				if (gameboardtile[row][column].isEnabled() == false) {
-					System.out.println(
-							"There is a letter already here, would you like to add letters to form a new word? ");
+					System.out.print("There is a letter already here. Is this letter the end of your word? (y/n): ");
+					boolean validinput = false;
+					String response = "";
+					while (!validinput) {
+						try {
+							String newline = sc.nextLine();
+							response = sc.nextLine();
+							while (!validinput) {
+								if(response.compareToIgnoreCase("y") == 0 || response.compareToIgnoreCase("n") == 0){
+									validinput = true;
+								}else{
+									System.out.print("Invalid Option - There is a letter already here. Is this letter the end of your word? (y/n): ");
+									response = sc.nextLine();
+								}
+							}
+						} catch (Exception e) {
+							System.out.println("You did not enter a y or a n.");
+							System.out.println("Is this letter the end of your word? (y/n) ");
+							response = sc.nextLine();
+						}
+					}
+					if (response.compareToIgnoreCase("y") == 0) {
+						endOfWord = true;
+						newTileToBePlaced = true;
+					}
 					JButton tempButton = gameboardtile[row][column];
 					wordPlayed += tempButton.getText();
 					Tile temp2 = new Tile();
@@ -453,10 +699,12 @@ public class scrabble extends Tile {
 			}
 
 			// eats the extra newline character
-			String newline = sc.nextLine();
+			if (endOfWord == false) {
+				String newline = sc.nextLine();
+			}
 
 			// Checks to make sure tile is in rack
-			while (!isInRack) {
+			while (!isInRack && endOfWord == false) {
 				System.out.print("Please select a letter from your tile rack? ");
 				String letter = sc.nextLine();
 				for (int i = 0; i < 7; i++) {
@@ -485,7 +733,7 @@ public class scrabble extends Tile {
 
 			// Add letter to the game board and disables the button to show it
 			// can not be moved
-			if (validFirstPlacement == true) {
+			if (validFirstPlacement == true && endOfWord == false) {
 				gameboardtile[row][column].setIcon(tempTile.icon);
 				gameboardtile[row][column].setText(tempTile.letter);
 				gameboardtile[row][column].setEnabled(false);
@@ -493,39 +741,66 @@ public class scrabble extends Tile {
 
 			// Check to make sure you are done with the word, if done, create
 			// word from the letters, compute score
-			// ---------------THIS IS WHERE THE DICTIONARY CHECK FUNCTION WOULD
-			// BE CALLED-------------------
 			System.out.print("Are you done with you word? (y/n): ");
 			String doneWithWord = sc.nextLine();
-			if (doneWithWord.compareToIgnoreCase("y") == 0) {
-				System.out.printf("%s played the word %s for %d points!\n", player1Name, wordPlayed, score);
-				wordPlayed = "";
-				if (firstplayer == 1) {
-					player1TotalScore += score;
-				} else {
-					player2TotalScore += score;
+			boolean validInputWord = false;
+			while(!validInputWord){
+				if(doneWithWord.compareToIgnoreCase("y") == 0 || doneWithWord.compareToIgnoreCase("n") == 0){
+					validInputWord = true;
+				}else{
+					System.out.print("Invalid Option - Are you done with you word? (y/n): ");
+					doneWithWord = sc.nextLine();
 				}
-				score = 0;
-
-				// Put Tiles back into the tile rack
+			}
+			if (doneWithWord.compareToIgnoreCase("y") == 0) {
+				if (checkWord(wordPlayed) == true) {
+					if (firstplayer == 1) {
+						System.out.printf("%s played the word %s for %d points!\n", player1Name, wordPlayed, score);
+						wordPlayed = "";
+						player1TotalScore += score;
+					} else {
+						System.out.printf("%s played the word %s for %d points!\n", player2Name, wordPlayed, score);
+						wordPlayed = "";
+						player2TotalScore += score;
+					}
+					score = 0;
+					// Put Tiles back into the tile rack
+				} else {
+					if (firstplayer == 1)
+						System.out.printf("%s played the wrong word %s", player1Name, wordPlayed);
+					else
+						System.out.printf("%s played the wrong word %s", player2Name, wordPlayed);
+					System.out.println();
+					resetBoard();
+					setGameBoardBonus();
+				}
 				addTilesToRack();
 				enableDisableRack();
-				switchPlayer();
+
 				if (firstplayer == 1) {
 					System.out.printf("%s's Total Score: %d\n", player1Name, player1TotalScore);
+					lbl_player1_score.setText("Score : " + Integer.toString(player1TotalScore));
 				} else {
 					System.out.printf("%s's Total Score: %d\n", player2Name, player2TotalScore);
+					lbl_player2_score.setText("Score : " + Integer.toString(player2TotalScore));
 				}
-
+				switchPlayer();
+				wordPlayed = "";
 			}
 		}
+
+		if (tilebag.empty() == true) {
+			gameOver = true;
+		}
+
 	}
 
 	// This checks to see who goes first
 	public static int whoGoesFirst() {
 
-		//If the player selects yes then a tile will be drawn for each, whoever gets the highest value will go first.
-		//If the player selects no then player 1 will automatically go first
+		// If the player selects yes then a tile will be drawn for each, whoever
+		// gets the highest value will go first.
+		// If the player selects no then player 1 will automatically go first
 		boolean isValidInput = false;
 		while (!isValidInput) {
 			System.out.print("Would you like to draw a tile (y/n)? ");
@@ -640,19 +915,9 @@ public class scrabble extends Tile {
 		// begin Scrabble Game
 
 		readInDictionary();
-
 		game();
-
 		sc.close();
 
 	}
 
 }
-
-// Peusdo code for the check word with dictionary function
-
-// public static boolean checkWord(String wordCreated){
-// test wordCreated with dictionary[]
-// for(aasdasdksad)
-// return true or false
-// }
