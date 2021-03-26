@@ -160,6 +160,9 @@ public class TileBag extends Tile{
 		Collections.shuffle(TileBag);
 	}
 	
+	boolean empty(){
+		return TileBag.isEmpty();
+	}
 	
 	
 }
