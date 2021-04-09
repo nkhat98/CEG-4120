@@ -1,6 +1,7 @@
 package Scrabble;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -10,7 +11,7 @@ public class TileBag extends Tile{
 	ArrayList<Tile> TileBag = new ArrayList<Tile>();
 	
 	
-	void createTileBag(){
+	void createTileBag() throws IOException{
 		//9 A, I
 		for(int i = 0; i < 9; i++){
 			Tile tile = new Tile();
@@ -150,7 +151,7 @@ public class TileBag extends Tile{
 		return TileBag.remove(index);
 	}
 	
-	void addTile(int index){
+	void addTile(int index) throws IOException{
 		Tile tile = new Tile();
 		tile.createTile(index);
 		TileBag.add(tile);
