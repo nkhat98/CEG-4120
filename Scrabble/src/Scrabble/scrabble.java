@@ -1,5 +1,10 @@
 package Scrabble;
 
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.BorderLayout;
@@ -12,7 +17,54 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.Random;
+
+class PAIR {
+	int row;
+	int col;
+
+	public PAIR(int r, int c) {
+		row = r;
+		col = c;
+	}
+
+	public boolean equal(PAIR pair) {
+		return this.row == pair.row && this.col == pair.col;
+	}
+
+	public boolean equal(int r, int c) {
+		return this.row == r && this.col == c;
+	}
+}
+
+class PairList {
+	ArrayList<PAIR> m_list = new ArrayList<>();
+
+	public PairList() {
+	}
+
+	public void add(PAIR e) {
+		m_list.add(e);
+	}
+
+	public boolean exists(PAIR e) {
+		for (PAIR tmp : m_list) {
+			if (tmp.equal(e) == true)
+				return true;
+		}
+		return false;
+	}
+
+	public boolean exists(int r, int c) {
+		for (PAIR tmp : m_list) {
+			if (tmp.equal(r, c) == true)
+				return true;
+		}
+		return false;
+	}
+}
+
 
 public class scrabble extends Tile {
 
@@ -37,7 +89,14 @@ public class scrabble extends Tile {
 
 	// Array of buttons where the tiles can be placed
 	public static JButton[][] gameboardtile = new JButton[16][16];
+	public static int[][] score_coefficient_array = new int[16][16];
 
+	public static PairList double_word_list;
+	public static PairList double_lett_list;
+	public static PairList trippl_word_list;
+	public static PairList trippl_lett_list;
+	
+	
 	// Player Tile Racks GUI end
 	public static JLabel[] TileRackPlayer1 = new JLabel[7];
 	public static JLabel[] TileRackPlayer2 = new JLabel[7];
@@ -107,7 +166,7 @@ public class scrabble extends Tile {
 
 	// Add the buttons to the game board also set the column and row index
 	// values along board
-	public static void addButtons() {
+	public static void addButtons() throws IOException {
 		// Add Game board tile buttons
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
@@ -120,6 +179,7 @@ public class scrabble extends Tile {
 					gameboardtile[i][j].setEnabled(true);
 					board.add(gameboardtile[i][j]);
 				}
+				score_coefficient_array[i][j] = 1;
 			}
 		}
 
@@ -233,7 +293,7 @@ public class scrabble extends Tile {
 				break;
 			}
 		}
-
+		tilebag.TileBag.clear();
 		tilebag.createTileBag();
 		tilebag.shuffle();
 
@@ -276,144 +336,282 @@ public class scrabble extends Tile {
 			}
 		});
 
+		// Swap a Tile button closes to the GUI
+		settingButtons[1].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Tile[] tmpTileRack;
+				JLabel[] tmpLabelArray;
+
+				tmpTileRack = tilerack1;
+				tmpLabelArray = TileRackPlayer1;
+				if(firstplayer == 2){
+					tmpTileRack = tilerack2;
+					tmpLabelArray = TileRackPlayer2;
+				}
+
+				int idx = rand.nextInt(7);
+				int num = rand.nextInt(upBound);
+				upBound --;
+				Tile tile = tilebag.pop(num);
+				try {
+					tilebag.addTile(tmpTileRack[idx].alphaValue);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				upBound++;
+				tmpLabelArray[idx].setIcon(tile.icon);
+				tmpTileRack[idx] = tile;
+
+			}
+		});
+		
+		// Done with turn
+		settingButtons[0].addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				addTilesToRack();
+				enableDisableRack();
+				switchPlayer();
+			}
+		});
+		
+		settingButtons[0].setEnabled(false);
+		
+		// Swap all tiles
+		settingButtons[2].addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				Tile[] tmpTileRack;
+				JLabel[] tmpLabelArray;
+
+				tmpTileRack = tilerack1;
+				tmpLabelArray = TileRackPlayer1;
+				if(firstplayer == 2){
+					tmpTileRack = tilerack2;
+					tmpLabelArray = TileRackPlayer2;
+				}
+
+				for(int i=0; i<7; i++){
+					int num = rand.nextInt(upBound);
+					upBound --;
+					Tile tile = tilebag.pop(num);
+					try {
+						tilebag.addTile(tmpTileRack[i].alphaValue);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					upBound++;
+					tmpLabelArray[i].setIcon(tile.icon);
+					tmpTileRack[i] = tile;
+				}
+
+
+			}
+		});
+		
 		for (int i = 0; i < 4; i++) {
 			settings.add(settingButtons[i]);
 		}
 	}
 
 	// Adds the tile score bonus properties
-	public static void setGameBoardBonus() {
-		Icon tripleWord = new ImageIcon("board_score_multipliers/Triple_Word.png");
+	public static void setGameBoardBonus() throws IOException {
+		trippl_word_list = new PairList();
+		Icon tripleWord = new ImageIcon(ImageIO.read(TileImgLoader.load("/board_score_multipliers/Triple_Word.png")));
 		gameboardtile[1][1].setIcon(tripleWord);
 		gameboardtile[1][1].setText("3W");
+		trippl_word_list.add(new PAIR(1, 1));
 		gameboardtile[8][1].setIcon(tripleWord);
 		gameboardtile[8][1].setText("3W");
+		trippl_word_list.add(new PAIR(8, 1));
 		gameboardtile[15][1].setIcon(tripleWord);
 		gameboardtile[15][1].setText("3W");
+		trippl_word_list.add(new PAIR(15, 1));
 		gameboardtile[1][8].setIcon(tripleWord);
 		gameboardtile[1][8].setText("3W");
+		trippl_word_list.add(new PAIR(1, 8));
 		gameboardtile[8][15].setIcon(tripleWord);
 		gameboardtile[8][15].setText("3W");
+		trippl_word_list.add(new PAIR(8, 15));
 		gameboardtile[1][15].setIcon(tripleWord);
 		gameboardtile[1][15].setText("3W");
+		trippl_word_list.add(new PAIR(1, 15));
 		gameboardtile[15][15].setIcon(tripleWord);
 		gameboardtile[15][15].setText("3W");
+		trippl_word_list.add(new PAIR(15, 15));
 		gameboardtile[15][8].setIcon(tripleWord);
 		gameboardtile[15][8].setText("3W");
+		trippl_word_list.add(new PAIR(15, 8));
 
-		Icon doubleWord = new ImageIcon("board_score_multipliers/Double_Word.png");
+		double_word_list = new PairList();
+		Icon doubleWord = new ImageIcon(ImageIO.read(TileImgLoader.load("board_score_multipliers/Double_Word.png")));
 		gameboardtile[2][2].setIcon(doubleWord);
 		gameboardtile[2][2].setText("2W");
+		double_word_list.add(new PAIR(2, 2));
 		gameboardtile[3][3].setIcon(doubleWord);
 		gameboardtile[3][3].setText("2W");
+		double_word_list.add(new PAIR(3, 3));
 		gameboardtile[4][4].setIcon(doubleWord);
 		gameboardtile[4][4].setText("2W");
+		double_word_list.add(new PAIR(4, 4));
 		gameboardtile[5][5].setIcon(doubleWord);
 		gameboardtile[5][5].setText("2W");
+		double_word_list.add(new PAIR(5, 5));
 		gameboardtile[11][11].setIcon(doubleWord);
 		gameboardtile[11][11].setText("2W");
+		double_word_list.add(new PAIR(11, 11));
 		gameboardtile[12][12].setIcon(doubleWord);
 		gameboardtile[12][12].setText("2W");
+		double_word_list.add(new PAIR(12, 12));
 		gameboardtile[13][13].setIcon(doubleWord);
 		gameboardtile[13][13].setText("2W");
+		double_word_list.add(new PAIR(13, 13));
 		gameboardtile[14][14].setIcon(doubleWord);
 		gameboardtile[14][14].setText("2W");
+		double_word_list.add(new PAIR(14, 14));
 		gameboardtile[14][2].setIcon(doubleWord);
 		gameboardtile[14][2].setText("2W");
+		double_word_list.add(new PAIR(14, 2));
 		gameboardtile[13][3].setIcon(doubleWord);
 		gameboardtile[13][3].setText("2W");
+		double_word_list.add(new PAIR(13, 3));
 		gameboardtile[12][4].setIcon(doubleWord);
 		gameboardtile[12][4].setText("2W");
+		double_word_list.add(new PAIR(12, 4));
 		gameboardtile[11][5].setIcon(doubleWord);
 		gameboardtile[11][5].setText("2W");
+		double_word_list.add(new PAIR(11, 5));
 		gameboardtile[5][11].setIcon(doubleWord);
 		gameboardtile[5][11].setText("2W");
+		double_word_list.add(new PAIR(5, 11));
 		gameboardtile[4][12].setIcon(doubleWord);
 		gameboardtile[4][12].setText("2W");
+		double_word_list.add(new PAIR(4, 12));
 		gameboardtile[3][13].setIcon(doubleWord);
 		gameboardtile[3][13].setText("2W");
+		double_word_list.add(new PAIR(3, 13));
 		gameboardtile[2][14].setIcon(doubleWord);
 		gameboardtile[2][14].setText("2W");
+		double_word_list.add(new PAIR(2, 14));
 
-		Icon doubleLetter = new ImageIcon("board_score_multipliers/Double_Letter.png");
+		double_lett_list = new PairList();	
+		Icon doubleLetter = new ImageIcon(ImageIO.read(TileImgLoader.load("board_score_multipliers/Double_Letter.png")));
 		gameboardtile[4][1].setIcon(doubleLetter);
 		gameboardtile[4][1].setText("2L");
+		double_lett_list.add(new PAIR(4, 1));
 		gameboardtile[12][1].setIcon(doubleLetter);
 		gameboardtile[12][1].setText("2L");
+		double_lett_list.add(new PAIR(12, 1));
 		gameboardtile[1][4].setIcon(doubleLetter);
 		gameboardtile[1][4].setText("2L");
+		double_lett_list.add(new PAIR(1, 4));
 		gameboardtile[1][12].setIcon(doubleLetter);
 		gameboardtile[1][12].setText("2L");
+		double_lett_list.add(new PAIR(1, 12));
 		gameboardtile[4][15].setIcon(doubleLetter);
 		gameboardtile[4][15].setText("2L");
+		double_lett_list.add(new PAIR(4, 15));
 		gameboardtile[12][15].setIcon(doubleLetter);
 		gameboardtile[12][15].setText("2L");
+		double_lett_list.add(new PAIR(12, 15));
 		gameboardtile[15][4].setIcon(doubleLetter);
 		gameboardtile[15][4].setText("2L");
+		double_lett_list.add(new PAIR(12, 15));
 		gameboardtile[15][12].setIcon(doubleLetter);
 		gameboardtile[15][12].setText("2L");
+		double_lett_list.add(new PAIR(15, 12));
 		gameboardtile[7][3].setIcon(doubleLetter);
 		gameboardtile[7][3].setText("2L");
+		double_lett_list.add(new PAIR(7, 3));
 		gameboardtile[8][4].setIcon(doubleLetter);
 		gameboardtile[8][4].setText("2L");
+		double_lett_list.add(new PAIR(8, 4));
 		gameboardtile[9][3].setIcon(doubleLetter);
 		gameboardtile[9][3].setText("2L");
+		double_lett_list.add(new PAIR(9, 3));
 		gameboardtile[7][7].setIcon(doubleLetter);
 		gameboardtile[7][7].setText("2L");
+		double_lett_list.add(new PAIR(7, 7));
 		gameboardtile[9][9].setIcon(doubleLetter);
 		gameboardtile[9][9].setText("2L");
+		double_lett_list.add(new PAIR(9, 9));
 		gameboardtile[7][9].setIcon(doubleLetter);
 		gameboardtile[7][9].setText("2L");
+		double_lett_list.add(new PAIR(7, 9));
 		gameboardtile[9][7].setIcon(doubleLetter);
 		gameboardtile[9][7].setText("2L");
+		double_lett_list.add(new PAIR(9, 7));
 		gameboardtile[3][7].setIcon(doubleLetter);
 		gameboardtile[3][7].setText("2L");
+		double_lett_list.add(new PAIR(3, 7));
 		gameboardtile[4][8].setIcon(doubleLetter);
 		gameboardtile[4][8].setText("2L");
+		double_lett_list.add(new PAIR(4, 8));
 		gameboardtile[3][9].setIcon(doubleLetter);
 		gameboardtile[3][9].setText("2L");
+		double_lett_list.add(new PAIR(3, 9));
 		gameboardtile[13][7].setIcon(doubleLetter);
 		gameboardtile[13][7].setText("2L");
+		double_lett_list.add(new PAIR(13, 7));
 		gameboardtile[12][8].setIcon(doubleLetter);
 		gameboardtile[12][8].setText("2L");
+		double_lett_list.add(new PAIR(12, 8));
 		gameboardtile[13][9].setIcon(doubleLetter);
 		gameboardtile[13][9].setText("2L");
+		double_lett_list.add(new PAIR(13, 9));
 		gameboardtile[7][13].setIcon(doubleLetter);
 		gameboardtile[7][13].setText("2L");
+		double_lett_list.add(new PAIR(7, 13));
 		gameboardtile[8][12].setIcon(doubleLetter);
 		gameboardtile[8][12].setText("2L");
+		double_lett_list.add(new PAIR(8, 12));
 		gameboardtile[9][13].setIcon(doubleLetter);
 		gameboardtile[9][13].setText("2L");
+		double_lett_list.add(new PAIR(9, 13));
 
-		Icon center = new ImageIcon("board_score_multipliers/Center.png");
+		Icon center = new ImageIcon(ImageIO.read(TileImgLoader.load("board_score_multipliers/Center.png")));
 		gameboardtile[8][8].setIcon(center);
 		gameboardtile[8][8].setText("Center");
 
-		Icon tripleLetter = new ImageIcon("board_score_multipliers/Triple_Letter.png");
+		trippl_lett_list = new PairList();
+		trippl_lett_list = new PairList();
+		Icon tripleLetter = new ImageIcon(ImageIO.read(TileImgLoader.load("board_score_multipliers/Triple_Letter.png")));
 		gameboardtile[6][2].setIcon(tripleLetter);
 		gameboardtile[6][2].setText("3L");
+		trippl_lett_list.add(new PAIR(6, 2));
 		gameboardtile[10][2].setIcon(tripleLetter);
 		gameboardtile[10][2].setText("3L");
+		trippl_lett_list.add(new PAIR(10, 2));
 		gameboardtile[2][6].setIcon(tripleLetter);
 		gameboardtile[2][6].setText("3L");
+		trippl_lett_list.add(new PAIR(2, 6));
 		gameboardtile[2][10].setIcon(tripleLetter);
 		gameboardtile[2][10].setText("3L");
+		trippl_lett_list.add(new PAIR(2, 10));
 		gameboardtile[6][6].setIcon(tripleLetter);
 		gameboardtile[6][6].setText("3L");
+		trippl_lett_list.add(new PAIR(6, 6));
 		gameboardtile[6][10].setIcon(tripleLetter);
 		gameboardtile[6][10].setText("3L");
+		trippl_lett_list.add(new PAIR(6, 10));
 		gameboardtile[6][14].setIcon(tripleLetter);
 		gameboardtile[6][14].setText("3L");
+		trippl_lett_list.add(new PAIR(6, 14));
 		gameboardtile[10][6].setIcon(tripleLetter);
 		gameboardtile[10][6].setText("3L");
+		trippl_lett_list.add(new PAIR(10, 6));
 		gameboardtile[10][10].setIcon(tripleLetter);
 		gameboardtile[10][10].setText("3L");
+		trippl_lett_list.add(new PAIR(10, 10));
 		gameboardtile[10][14].setIcon(tripleLetter);
 		gameboardtile[10][14].setText("3L");
+		trippl_lett_list.add(new PAIR(10, 14));
 		gameboardtile[14][6].setIcon(tripleLetter);
 		gameboardtile[14][6].setText("3L");
+		trippl_lett_list.add(new PAIR(14, 6));
 		gameboardtile[14][10].setIcon(tripleLetter);
 		gameboardtile[14][10].setText("3L");
+		trippl_lett_list.add(new PAIR(14, 10));
 
 	}
 
@@ -593,13 +791,19 @@ public class scrabble extends Tile {
 	}
 
 	// This is the function that calls the main game loop
-	public static void game() {
+	public static void game() throws IOException {
 		boolean gameOver = false;
 		boolean validFirstPlacement = false;
 		String wordPlayed = "";
 		int score = 0;
 		int row = 0;
 		int column = 0;
+		
+		int row_startWord = 8;
+		int col_startWord = 8;
+		boolean checkWordAroundFlag = false;
+		int word_mul_score = 1;
+		int letter_score = 1;
 
 		// main game loop
 		while (!gameOver) {
@@ -662,6 +866,35 @@ public class scrabble extends Tile {
 					}
 				}
 
+				if (row == 8 && column == 8)
+					checkWordAroundFlag = true;
+				if (checkWordAroundFlag == false) {
+					if (row >= 1 && row < 16 && column >= 0 && column < 16)
+						if (gameboardtile[row - 1][column].isEnabled() == false) {
+							row_startWord = row - 1;
+							col_startWord = column;
+							checkWordAroundFlag = true;
+						}
+					if (row >= 0 && row < 16 && column >= 1 && column < 16)
+						if (gameboardtile[row][column - 1].isEnabled() == false) {
+							row_startWord = row;
+							col_startWord = column - 1;
+							checkWordAroundFlag = true;
+						}
+					if (row >= 0 && row < 16 && column >= 0 && column < 16)
+						if (gameboardtile[row + 1][column].isEnabled() == false) {
+							row_startWord = row + 1;
+							col_startWord = column;
+							checkWordAroundFlag = true;
+						}
+					if (row >= 0 && row < 16 && column >= 0 && column < 16)
+						if (gameboardtile[row][column + 1].isEnabled() == false) {
+							row_startWord = row;
+							col_startWord = column + 1;
+							checkWordAroundFlag = true;
+						}
+				}
+				
 				// Will account for a user adding letters to an existing word
 				if (gameboardtile[row][column].isEnabled() == false) {
 					System.out.print("There is a letter already here. Is this letter the end of your word? (y/n): ");
@@ -712,7 +945,16 @@ public class scrabble extends Tile {
 						tempTile = tilerack1[i];
 						isInRack = true;
 						TileRackPlayer1[i].setEnabled(false);
-						score += tempTile.value;
+						if (trippl_word_list.exists(row, column) == true)
+							word_mul_score = 3;
+						if (double_word_list.exists(row, column) == true && word_mul_score != 3)
+							word_mul_score = 2;
+						letter_score = 1;
+						if (trippl_lett_list.exists(row, column) == true)
+							letter_score = 3;
+						if (double_lett_list.exists(row, column) == true)
+							letter_score = 2;
+						score += tempTile.value * letter_score;
 						wordPlayed += tempTile.letter;
 						break;
 					}
@@ -720,7 +962,16 @@ public class scrabble extends Tile {
 						tempTile = tilerack2[i];
 						isInRack = true;
 						TileRackPlayer2[i].setEnabled(false);
-						score += tempTile.value;
+						if (trippl_word_list.exists(row, column) == true)
+							word_mul_score = 3;
+						if (double_word_list.exists(row, column) == true && word_mul_score != 3)
+							word_mul_score = 2;
+						letter_score = 1;
+						if (trippl_lett_list.exists(row, column) == true)
+							letter_score = 3;
+						if (double_lett_list.exists(row, column) == true)
+							letter_score = 2;
+						score += tempTile.value * letter_score;
 						wordPlayed += tempTile.letter;
 						break;
 					}
@@ -753,6 +1004,26 @@ public class scrabble extends Tile {
 				}
 			}
 			if (doneWithWord.compareToIgnoreCase("y") == 0) {
+				if (checkWordAroundFlag == true) {
+					Tile tmp2 = new Tile();
+					if (wordPlayed.charAt(0) != gameboardtile[row_startWord][col_startWord].getText().charAt(0)) {
+						if (trippl_word_list.exists(row_startWord, col_startWord) == true)
+							word_mul_score = 3;
+						if (double_word_list.exists(row_startWord, col_startWord) == true && word_mul_score != 3)
+							word_mul_score = 2;
+						letter_score = 1;
+						if (trippl_lett_list.exists(row_startWord, col_startWord) == true)
+							letter_score = 3;
+						if (double_lett_list.exists(row_startWord, col_startWord) == true)
+							letter_score = 2;
+						score += tmp2.getTileValue(gameboardtile[row_startWord][col_startWord].getText())
+								* letter_score;
+						score *= word_mul_score;
+						wordPlayed = gameboardtile[row_startWord][col_startWord].getText() + wordPlayed;
+					}
+				}
+				checkWordAroundFlag = false;
+				word_mul_score = 1;
 				if (checkWord(wordPlayed) == true) {
 					if (firstplayer == 1) {
 						System.out.printf("%s played the word %s for %d points!\n", player1Name, wordPlayed, score);
@@ -792,11 +1063,11 @@ public class scrabble extends Tile {
 		if (tilebag.empty() == true) {
 			gameOver = true;
 		}
-
+		
 	}
 
 	// This checks to see who goes first
-	public static int whoGoesFirst() {
+	public static int whoGoesFirst() throws IOException {
 
 		// If the player selects yes then a tile will be drawn for each, whoever
 		// gets the highest value will go first.
@@ -815,7 +1086,7 @@ public class scrabble extends Tile {
 				int number = rand.nextInt(upBound);
 				Tile tile1 = tilebag.pop(number);
 				--upBound;
-				System.out.printf("You tile is: %s\n", tile1.letter);
+				System.out.printf("Your tile is: %s\n", tile1.letter);
 				int number2 = rand.nextInt(upBound);
 				Tile tile2 = tilebag.pop(number2);
 				--upBound;
@@ -855,9 +1126,8 @@ public class scrabble extends Tile {
 	}
 
 	// This reads in a dictionary to check the word
-	public static void readInDictionary() {
-
-		File file = new File("dictionary.txt");
+	public static void readInDictionary(String dict) {
+		File file = new File(dict);
 		String line = "";
 
 		try {
@@ -882,11 +1152,16 @@ public class scrabble extends Tile {
 	}
 
 	// main function
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 		setDimensions();
 		addLabels();
 		addButtons();
-		setGameBoardBonus();
+		try {
+			setGameBoardBonus();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		// if 1 player 1, if 2 player 2
 		int playsFirst = whoGoesFirst();
 		if (playsFirst == 1) {
@@ -914,8 +1189,14 @@ public class scrabble extends Tile {
 
 		// begin Scrabble Game
 
-		readInDictionary();
-		game();
+		readInDictionary(args[0]);
+		try {
+			game();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		sc.close();
 
 	}
